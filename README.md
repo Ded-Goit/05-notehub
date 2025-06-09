@@ -1,37 +1,40 @@
-# React + TypeScript + Vite
+# An application for storing, creating, deleting, and searching notes. React + TypeScript + Vite
 
 ## 📂 Project structure
 
-           03-react-movies/
-           ├── 📁public         Contains static assets that are copied directly to the final build
-           ├── 📁src/                 Main source directory where all the application code resides.
-           │ ├── 📁assets Stores general-purpose static files used in the app (e.g., images, icons).
-           │ ├── 📁components/ Folder for all React UI components, structured by feature or purpose.
-           │ │ ├── 📁App/     Contains the root application component and its CSS styles.
-           │ │ │ ├── 📄App.tsx      — Main component where application logic is initiated.
-           │ │ │ └── 📄App.module.css             — CSS Module for styling App.tsx.
-           │ │ ├── 📁ErrorMessage/           UI component for displaying error messages.
-           │ │ │ ├── 📄ErrorMessage.tsx           — Component for showing error alerts.
-           │ │ │ └── 📄ErrorMessage.module.css    — Styles specific to ErrorMessage.
-           │ │ ├── 📁Loader/                 UI loader/spinner component.
-           │ │ │ ├── 📄Loader.tsx                 — Loading animation or spinner component.
-           │ │ │ └── Loader.module.css            — Styling for the loader.
-           │ │ ├── 📁MovieGrid/                  Component for displaying a grid of movies.
-           │ │ │ ├── 📄MovieGrid.tsx              — Grid layout for showing movie items.
-           │ │ │ └── 📄MovieGrid.module.css       — Styling for the movie grid.
-           │ │ └── 📁MovieModal/  Modal component for displaying detailed movie information.
-           │ │ │ ├── 📄MovieModal.tsx             — Modal window with movie details.
-           │ │ │ └── 📄MovieModal.module.css      — Modal-specific styles.
-           │ │ ├── 📁SearchBar/              Search input and button component.
-           │ │ │ ├── 📄SearchBar.tsx              — Handles search input and form submission.
-           │ │ │ └── 📄SearchBar.module.css       — Styling for the search bar.
-           │ ├── 📁services/        Contains service functions for external API interactions.
-           │ │ └── 📄movieService.ts              — Logic for fetching movie data from TMDB API.
-           │ ├── 📁types/           TypeScript type definitions.
-           │ │ └── 📄movie.ts              — Type definitions for movie-related data structures.
-           │ ├── 📄declarations.d.ts    Global TypeScript declarations
+           05-notehub/
+           ├── 📁public         # Static assets copied directly to the final build
+           ├── 📁src/           # Main source directory for all application logic
+           │ ├── 📁assets       # Icons, images, fonts
+           │ ├── 📁components/  # Reusable UI components grouped by feature
+           │ │ ├── 📁App/
+           │ │ │ ├── 📄App.tsx      # Main app container that ties components together
+           │ │ │ └── 📄App.module.css    # Styling for App component
+           │ │ ├── 📁ErrorMessage/
+           │ │ │ ├── 📄ErrorMessage.tsx           # Component to display user-facing error messages
+           │ │ │ └── 📄ErrorMessage.module.css    # Styles specific to ErrorMessage.
+           │ │ ├── 📁NoteForm/
+           │ │ │ ├── 📄NoteForm.tsx   # Form inside modal to create new note (uses Formik & Yup)
+           │ │ │ └── NoteForm.module.css # Scoped styles for form fields and buttons
+           │ │ ├── 📁NoteList/
+           │ │ │ ├── 📄NoteList.tsx   # Renders a list of notes fetched from the backend
+           │ │ │ └── 📄NoteList.module.css # Card layout and button styles for individual notes
+           │ │ └── 📁NoteModal/
+           │ │ │ ├── 📄NoteModal.tsx  # Modal container that wraps NoteForm and uses createPortal
+           │ │ │ └── 📄NoteModal.module.css # Modal positioning and backdrop styles
+           │ │ ├── 📁Pagination/
+           │ │ │ ├── 📄Pagination.tsx  # Handles page navigation using ReactPaginate
+           │ │ │ └── 📄Pagination.module.css # Pagination component styles (active, disabled, etc.)
+           │ │ ├── 📁SearchBox/
+           │ │ │ ├── 📄SearchBox.tsx # Input component for filtering notes (with debounce)
+           │ │ │ └── 📄SearchBox.module.css  # Styles for search input
+           │ ├── 📁services/
+           │ │ └── 📄noteService.ts# Axios-based API handlers: fetchNotes, createNote, deleteNote
+           │ ├── 📁types/
+           │ │ └── 📄note.ts # TypeScript interface Note and related types
+           │ ├── 📄declarations.d.ts    # Custom TS declarations (e.g., for CSS modules)
            │ ├── 📄global.css           Global styles applied throughout the app.
-           │ ├── 📄main.tsx             Entry point of the React application.
+           │ ├── 📄main.tsx             # Entry point: ReactDOM.createRoot + React Query provider
            │ └── 📄vite-env.d.ts Environment type declarations for Vite's special variables like
            ├── 📄.gitignore          Lists files/folders that Git should ignore
            ├── 📄README.md           Project documentation and setup instructions.
