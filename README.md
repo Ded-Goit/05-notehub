@@ -29,7 +29,7 @@
            │ │ │ ├── 📄SearchBox.tsx # Input component for filtering notes (with debounce)
            │ │ │ └── 📄SearchBox.module.css  # Styles for search input
            │ ├── 📁services/
-           │ │ └── 📄noteService.ts# Axios-based API handlers: fetchNotes, createNote, deleteNote
+           │ │ └── 📄noteService.ts # Axios-based API handlers: fetchNotes, createNote, deleteNote
            │ ├── 📁types/
            │ │ └── 📄note.ts # TypeScript interface Note and related types
            │ ├── 📄declarations.d.ts    # Custom TS declarations (e.g., for CSS modules)

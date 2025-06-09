@@ -1,82 +1,66 @@
-import styles from "./App.module.css";
-import SearchBar from "../SearchBar/SearchBar";
-import MovieGrid from "../MovieGrid/MovieGrid";
-import Loader from "../Loader/Loader";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import MovieModal from "../MovieModal/MovieModal";
-import type { Movie } from "../../types/movie";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import css from "./App.module.css";
+import NoteList from "../NoteList/NoteList";
+import { fetchNotes } from "../../services/noteService";
 import { useEffect, useState } from "react";
-import { fetchMovies } from "../../services/movieService";
-import toast, { Toaster } from "react-hot-toast";
-import ReactPaginate from "react-paginate";
-import type { FetchMoviesResponse } from "../../services/movieService";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import Pagination from "../Pagination/Pagination";
+import NoteModal from "../NoteModal/NoteModal";
+import SearchBox from "../SearchBox/SearchBox";
+import { useDebounce } from "use-debounce";
+import { PropagateLoader } from "react-spinners";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
-type PageChangeEvent = { selected: number };
 export default function App() {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsOpenModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedText] = useDebounce(searchQuery, 300);
 
-  const handleFormAction = (newQuery: string) => {
-    if (!newQuery) {
-      toast.error("Please enter your search query.");
-      return;
-    }
-
-    setQuery(newQuery);
-    setPage(1);
-  };
-  const handlePageChange = ({ selected }: PageChangeEvent) => {
-    setPage(selected + 1);
-  };
-
-  const { data, isLoading, isError, isSuccess } = useQuery<
-    FetchMoviesResponse,
-    Error
-  >({
-    queryKey: ["movies", query, page],
-    queryFn: () => fetchMovies(query, page),
-    enabled: query.length > 0,
+  const { data, isSuccess, isPending, isError } = useQuery({
+    queryKey: ["notes", debouncedText, currentPage],
+    queryFn: () => fetchNotes(debouncedText, currentPage),
     placeholderData: keepPreviousData,
   });
+
   useEffect(() => {
-    if (isSuccess && data && data.results.length === 0) {
-      toast("No movies found for your request.");
-    }
-  }, [isSuccess, data]);
+    setCurrentPage(1);
+  }, [debouncedText]);
+
+  function handleSearchChange(value: string) {
+    setSearchQuery(value);
+  }
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+  }
 
   return (
-    <div className={styles.app}>
-      <Toaster />
-      <SearchBar onSubmit={handleFormAction} />
-
-      {isLoading && <Loader />}
+    <div className={css.app}>
+      <header className={css.toolbar}>
+        <SearchBox inputValue={searchQuery} onChange={handleSearchChange} />
+        <button className={css.button} onClick={() => setIsOpenModal(true)}>
+          Create note +
+        </button>
+        {isSuccess && data.totalPages > 1 && (
+          <Pagination
+            totalPages={data.totalPages}
+            setPage={handlePageChange}
+            currentPage={currentPage}
+            pageRangeDisplayed={5}
+            marginPagesDisplayed={1}
+          />
+        )}
+      </header>
+      {isSuccess && data.notes.length > 0 && <NoteList notes={data.notes} />}
       {isError && <ErrorMessage />}
-
-      {data && data.results.length > 0 && (
-        <>
-          {data.total_pages > 1 && (
-            <ReactPaginate
-              pageCount={data.total_pages}
-              pageRangeDisplayed={5}
-              marginPagesDisplayed={1}
-              onPageChange={handlePageChange}
-              forcePage={page - 1}
-              containerClassName={styles.pagination}
-              activeClassName={styles.active}
-              nextLabel="→"
-              previousLabel="←"
-            />
-          )}
-          <MovieGrid movies={data.results} onSelect={setSelectedMovie} />
-        </>
-      )}
-
-      {selectedMovie && (
-        <MovieModal
-          movie={selectedMovie}
-          onClose={() => setSelectedMovie(null)}
+      {isModalOpen && <NoteModal onClose={() => setIsOpenModal(false)} />}
+      {isPending && (
+        <PropagateLoader
+          cssOverride={{
+            display: "block",
+            margin: "0 auto",
+            width: "320px",
+          }}
         />
       )}
     </div>
