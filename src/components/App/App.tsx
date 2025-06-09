@@ -38,9 +38,7 @@ export default function App() {
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox inputValue={searchQuery} onChange={handleSearchChange} />
-        <button className={css.button} onClick={() => setIsOpenModal(true)}>
-          Create note +
-        </button>
+
         {isSuccess && data.totalPages > 1 && (
           <Pagination
             totalPages={data.totalPages}
@@ -50,6 +48,9 @@ export default function App() {
             marginPagesDisplayed={1}
           />
         )}
+        <button className={css.button} onClick={() => setIsOpenModal(true)}>
+          Create note +
+        </button>
       </header>
       {isSuccess && data.notes.length > 0 && <NoteList notes={data.notes} />}
       {isError && <ErrorMessage />}
